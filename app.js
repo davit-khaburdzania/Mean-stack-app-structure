@@ -5,6 +5,10 @@ var express = require('express'),
 
 app.use(app.router);
 app.use(express.static(pub_dir));
+app.use(express.errorHandler());
+
+app.set('views', __dirname + '/views');
+app.set('view engene', 'jade');
 
 app.listen(port, function () {
   console.log('listening on port:', port);
