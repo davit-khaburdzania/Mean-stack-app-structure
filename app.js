@@ -1,8 +1,11 @@
 var express = require('express'),
-    app = express();
+    app = express(),
+    pub_dir = __dirname + '/public',
+    port = 3000;
 
-app.get('/hello-world', function (req, res) {
-  res.json({ okay: true });
+app.use(app.router);
+app.use(express.static(pub_dir));
+
+app.listen(port, function () {
+  console.log('listening on port:', port);
 });
-
-app.listen(3000);
