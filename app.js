@@ -11,7 +11,7 @@ global.middlewares = require(__dirname + '/middlewares');
 app.use(app.router);
 app.use(express.static(pub_dir));
 app.set('views', __dirname + '/views');
-app.set('view engene', 'jade');
+app.set('view engine', 'jade');
 
 // enviroment specific configuration
 if (app.get('env') === 'development') {
@@ -19,6 +19,7 @@ if (app.get('env') === 'development') {
 }
 
 nconf.file({ file: __dirname + '/configs/config.json' });
+require(__dirname + '/controllers')(app);
 
 // middlewares
 app.use(middlewares.error_handler);
