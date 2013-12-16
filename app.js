@@ -4,9 +4,7 @@ var express = require('express'),
     config = require('nconf').argv().env();
 
 global.Middlewares = require(__dirname + '/middlewares');
-global.config = config;
-global.mongoose = require('mongoose');
-global.base_dir = __dirname;
+global.Helpers = require(__dirname + '/helpers');
 
 // development configuration
 if (app.get('env') === 'development') {
@@ -23,8 +21,13 @@ app.use(express.static(pub_dir));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-require(__dirname + '/controllers')(app);
+//global variables
+global.config = config;
+global.mongoose = require('mongoose');
+global.base_dir = __dirname;
 global.Models = require(__dirname + '/models');
+
+require(__dirname + '/controllers')(app);
 app.use(Middlewares.error_handler);
 
 app.listen(config.get('port'), function () {
