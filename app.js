@@ -12,9 +12,12 @@ config.file('config', __dirname + '/configs/config.json');
 // global variables
 global.config = config;
 global.mongoose = require('mongoose');
+global.base_dir = __dirname;
 
 global.Middlewares = require(__dirname + '/middlewares');
 global.Models = require(__dirname + '/models');
+
+app.use(Middlewares.base_dir);
 
 // base configuration
 app.use(app.router);
@@ -23,8 +26,6 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 require(__dirname + '/controllers')(app);
-
-// middlewares
 app.use(Middlewares.error_handler);
 
 app.listen(config.get('port'), function () {
