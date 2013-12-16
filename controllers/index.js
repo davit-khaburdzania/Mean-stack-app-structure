@@ -3,7 +3,7 @@ module.exports = function (app) {
 
   fs.readdirSync(__dirname)
     .filter(function (dir) { 
-      return (dir != 'index.js');
+      return dir != 'index.js';
     })
     .map(function (dir) {
       dir = __dirname + '/' + dir;
@@ -11,9 +11,8 @@ module.exports = function (app) {
       if (fs.lstatSync(dir).isDirectory()) {
         load_from_dir(dir);
       }
-
-      if (dir.indexOf('.js') !== -1) {
-        load(dir, false);
+      if (~dir.indexOf('.js')) {
+        load(dir);
       }
     });
 
@@ -34,7 +33,7 @@ module.exports = function (app) {
   function load_from_dir (path) {
     fs.readdirSync(path)
       .filter(function (dir) {
-        return (dir != 'views');
+        return dir != 'views';
       })
       .forEach(function (dir) {
         load(path + '/' + dir, path);

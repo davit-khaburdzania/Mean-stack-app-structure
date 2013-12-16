@@ -1,11 +1,20 @@
 var express = require('express'),
     app = express(),
     pub_dir = __dirname + '/public',
-    nconf = require('nconf').argv().env();
+    config = require('nconf').argv().env();
+
+// enviroment specific configuration
+if (app.get('env') === 'development') {
+  config.file('local', __dirname + '/configs/local.json');
+}
+config.file('config', __dirname + '/configs/config.json');
 
 // global variables
-global.nconf = nconf;
-global.middlewares = require(__dirname + '/middlewares');
+global.config = config;
+global.mongoose = require('mongoose');
+
+global.Middlewares = require(__dirname + '/middlewares');
+global.Models = require(__dirname + '/models');
 
 // base configuration
 app.use(app.router);
@@ -13,17 +22,11 @@ app.use(express.static(pub_dir));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-// enviroment specific configuration
-if (app.get('env') === 'development') {
-  nconf.file({ file: __dirname + '/configs/local.json' });
-}
-
-nconf.file({ file: __dirname + '/configs/config.json' });
 require(__dirname + '/controllers')(app);
 
 // middlewares
-app.use(middlewares.error_handler);
+app.use(Middlewares.error_handler);
 
-app.listen(nconf.get('port'), function () {
-  console.log('listening on port:', nconf.get('port'));
+app.listen(config.get('port'), function () {
+  console.log('listening on port:', config.get('port'));
 });

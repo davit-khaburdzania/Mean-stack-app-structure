@@ -1,1 +1,3 @@
-{ }
+{
+  "DB": "mongodb://dkhaburdzania:jina2009@ds059898.mongolab.com:59898/hn-developers"
+}
