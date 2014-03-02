@@ -1,7 +1,11 @@
-var Schema = mongoose.Schema;
+var UserSchema, User;
 
-var UserSchema = new Schema({
+UserSchema = new mongoose.Schema({
   name: String
 });
 
-module.exports = mongoose.model('User', UserSchema);
+UserSchema.statics.test = function () {
+  return 'test';
+};
+
+module.exports = User = mongoose.model('User', UserSchema);

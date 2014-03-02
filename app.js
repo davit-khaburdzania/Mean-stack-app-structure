@@ -1,35 +1,40 @@
-var express = require('express'),
-    app = express(),
-    pub_dir = __dirname + '/public',
-    config = require('nconf').argv().env();
+var express = require('express');
+    http = require('http'),
+    path = require('path'),
+    app = express();
+    config = require('nconf').argv().env().file('config', __dirname + '/configs/global.json');
 
+global.express = express;
 global.Middlewares = require(__dirname + '/middlewares');
 global.Helpers = require(__dirname + '/helpers');
 
-// development configuration
 if (app.get('env') === 'development') {
-  config.file('local', __dirname + '/configs/local.json');
+  app.use(express.errorHandler());
   app.use(Middlewares.less());
+  config.file('local', __dirname + '/configs/local.json');
 }
 
-config.file('config', __dirname + '/configs/config.json');
-app.use(Middlewares.base_dir);
-
-// base configuration
-app.use(app.router);
-app.use(express.static(pub_dir));
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(express.logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(express.methodOverride());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
 //global variables
 global.config = config;
 global.mongoose = require('mongoose');
+global._ = require('underscore');
 global.base_dir = __dirname;
-global.Models = require(__dirname + '/models');
+global.app = app;
+global.Models = require(__dirname + '/models')(config.get('DB'));
 
-require(__dirname + '/controllers')(app);
+require(__dirname + '/controllers');
 app.use(Middlewares.error_handler);
 
-app.listen(config.get('port'), function () {
-  console.log('listening on port:', config.get('port'));
+
+http.createServer(app).listen(config.get('PORT'), function(){
+  console.log('server listening on port ' + config.get('PORT'));
 });
